@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">SkyCast</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="onb1">Check real-time weather!</string>
+    <string name="onb2">Get potential weather!</string>
+    <string name="onb3">Get the weather and stay safe</string>
+    <string name="lorem1">Quick and Easy Signup for Weather API
+WeatherAPI.com makes it super easy to integrate our realtime, daily, hourly and 15 min interval weather forecast data, historical weather, bulk request,
+</string>
+</resources>
