@@ -1,6 +1,7 @@
 package com.techafresh.skycast.presentation.hilt
 
 import com.techafresh.skycast.domain.usecases.GetCurrentWeatherUseCase
+import com.techafresh.skycast.domain.usecases.GetWeatherForecastUseCase
 import com.techafresh.skycast.presentation.viewmodel.WeatherViewModelFactory
 import dagger.Module
 import dagger.Provides
@@ -14,7 +15,7 @@ class FactoryModule {
 
     @Provides
     @Singleton
-    fun provideFactory(getCurrentWeatherUseCase: GetCurrentWeatherUseCase) : WeatherViewModelFactory{
-        return WeatherViewModelFactory(getCurrentWeatherUseCase)
+    fun provideFactory(getCurrentWeatherUseCase: GetCurrentWeatherUseCase , getWeatherForecastUseCase: GetWeatherForecastUseCase) : WeatherViewModelFactory{
+        return WeatherViewModelFactory(getCurrentWeatherUseCase , getWeatherForecastUseCase)
     }
 }

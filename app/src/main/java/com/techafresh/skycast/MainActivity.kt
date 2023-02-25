@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
     // Location
     private val requestcode = 22
     lateinit var geocoder: Geocoder
-    lateinit var listAddress : List<Address>
+//    lateinit var listAddress : List<Address>
     lateinit var locationManager: LocationManager
     lateinit var locationListener: LocationListener
     lateinit var userLocation : Location
@@ -56,16 +56,26 @@ class MainActivity : AppCompatActivity() {
             override fun onLocationChanged(location: Location) {
 
                 geocoder = Geocoder(applicationContext, Locale.getDefault())
-                listAddress = geocoder.getFromLocation(location.latitude, location.longitude, 1)!!
+                val listAddress = geocoder.getFromLocation(location.latitude, location.longitude, 1)
                 userLocation = location
 
                 // Current Weather
-                weatherViewModel.getCurrentWeatherData(listAddress[0].locality)
+                weatherViewModel.getCurrentWeatherData(listAddress!![0].locality)
                 weatherViewModel.currentWeatherLiveData.observe(this@MainActivity, Observer {
                     try {
-                        Log.d("MYTAG", it.body().toString())
+                        Log.d("MYTAG CURRENT", it.body().toString())
                     } catch (ex: Exception) {
-                        Log.d("MAINACTIVITY", "Error = " + ex.message)
+                        Log.d("MAINACTIVITY CURRENT", "Error = " + ex.message)
+                    }
+                })
+
+                // Forecast Weather
+                weatherViewModel.getWeatherForecast(listAddress!![0].locality)
+                weatherViewModel.weatherForecastLiveData.observe(this@MainActivity , Observer {
+                    try {
+                        Log.d("MYTAG FORECAST", it.body().toString())
+                    } catch (ex: Exception) {
+                        Log.d("MAINACTIVITY FORECAST", "Error = " + ex.message)
                     }
                 })
 
