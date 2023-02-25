@@ -5,8 +5,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.techafresh.skycast.data.dataClasses.current.Current
+import com.techafresh.skycast.data.dataClasses.forecast.Astro
 import com.techafresh.skycast.data.dataClasses.forecast.Forecast
 import com.techafresh.skycast.domain.repository.Repository
+import com.techafresh.skycast.domain.usecases.GetAstroDetailsUseCase
 import com.techafresh.skycast.domain.usecases.GetCurrentWeatherUseCase
 import com.techafresh.skycast.domain.usecases.GetWeatherForecastUseCase
 import kotlinx.coroutines.launch
@@ -14,7 +16,8 @@ import retrofit2.Response
 
 class WeatherViewModel(
     private val getCurrentWeatherUseCase: GetCurrentWeatherUseCase,
-    private val getWeatherForecastUseCase: GetWeatherForecastUseCase
+    private val getWeatherForecastUseCase: GetWeatherForecastUseCase,
+    private val getAstroDetailsUseCase: GetAstroDetailsUseCase
 ) : ViewModel() {
 
     val currentWeatherLiveData : MutableLiveData<Response<Current>> = MutableLiveData()
@@ -33,6 +36,16 @@ class WeatherViewModel(
             weatherForecastLiveData.postValue(getWeatherForecastUseCase.execute(location))
         }catch (ex : Exception){
             Log.d("WEATHER VIEW MODEL FORECAST" , "Error = " + ex.message)
+        }
+    }
+
+    val astroDetailsLiveData : MutableLiveData<Response<Astro>> = MutableLiveData()
+
+    fun getAstroDetails(date : String , location: String) = viewModelScope.launch {
+        try {
+           astroDetailsLiveData.postValue(getAstroDetailsUseCase.execute(date, location))
+        }catch (ex : Exception){
+            Log.d("WEATHER VIEW MODEL ASTRO" , "Error = " + ex.message)
         }
     }
 }

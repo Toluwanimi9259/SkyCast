@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.techafresh.skycast.presentation.viewmodel.WeatherViewModel
 import com.techafresh.skycast.presentation.viewmodel.WeatherViewModelFactory
 import dagger.hilt.android.AndroidEntryPoint
+import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
@@ -32,11 +33,16 @@ class MainActivity : AppCompatActivity() {
 
     // Location
     private val requestcode = 22
-    lateinit var geocoder: Geocoder
+//    lateinit var geocoder: Geocoder
 //    lateinit var listAddress : List<Address>
     lateinit var locationManager: LocationManager
     lateinit var locationListener: LocationListener
     lateinit var userLocation : Location
+
+    // Date
+    lateinit var calendar: Calendar
+    lateinit var simpleDateFormat: SimpleDateFormat
+    lateinit var currentDate : String
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,11 +57,17 @@ class MainActivity : AppCompatActivity() {
         // Initializing the ViewModel
         weatherViewModel = ViewModelProvider(this, weatherViewModelFactory)[WeatherViewModel::class.java]
 
+        // Date....
+        calendar = Calendar.getInstance()
+        simpleDateFormat = SimpleDateFormat("yyyy/mm/dd")
+        currentDate = simpleDateFormat.format(calendar.time)
+
+        // Location TINZ
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         locationListener = object : LocationListener {
             override fun onLocationChanged(location: Location) {
 
-                geocoder = Geocoder(applicationContext, Locale.getDefault())
+                val geocoder = Geocoder(applicationContext, Locale.getDefault())
                 val listAddress = geocoder.getFromLocation(location.latitude, location.longitude, 1)
                 userLocation = location
 
@@ -76,6 +88,16 @@ class MainActivity : AppCompatActivity() {
                         Log.d("MYTAG FORECAST", it.body().toString())
                     } catch (ex: Exception) {
                         Log.d("MAINACTIVITY FORECAST", "Error = " + ex.message)
+                    }
+                })
+
+                // Astro
+                weatherViewModel.getAstroDetails(currentDate , listAddress!![0].locality)
+                weatherViewModel.astroDetailsLiveData.observe(this@MainActivity , Observer {
+                    try {
+                        Log.d("MYTAG ASTRO", it.body().toString())
+                    } catch (ex: Exception) {
+                        Log.d("MAINACTIVITY ASTRO", "Error = " + ex.message)
                     }
                 })
 
