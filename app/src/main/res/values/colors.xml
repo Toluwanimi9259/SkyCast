@@ -14,4 +14,6 @@
     <color name="screen_footer">#1F1D2B</color>
     <color name="btn1">#9C30FF</color>
     <color name="gg">#673AB7</color>
+    <color name="ff">#EEFFFFFF</color>
+    <color name="sd" >#88458EA4</color>
 </resources>
