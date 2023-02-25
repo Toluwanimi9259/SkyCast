@@ -15,6 +15,7 @@ import com.techafresh.skycast.presentation.activities.onboarding.OnboardingActiv
 class SplashActivity : AppCompatActivity() {
 
     lateinit var sharedPreferences : SharedPreferences
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
