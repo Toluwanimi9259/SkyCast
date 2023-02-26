@@ -1,6 +1,12 @@
 package com.techafresh.skycast.presentation.viewmodel
 
+import android.app.Application
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,6 +21,7 @@ import kotlinx.coroutines.launch
 import retrofit2.Response
 
 class WeatherViewModel(
+    private val app : Application,
     private val getCurrentWeatherUseCase: GetCurrentWeatherUseCase,
     private val getWeatherForecastUseCase: GetWeatherForecastUseCase,
     private val getAstroDetailsUseCase: GetAstroDetailsUseCase
@@ -23,7 +30,12 @@ class WeatherViewModel(
     val currentWeatherLiveData : MutableLiveData<Response<Current>> = MutableLiveData()
     fun getCurrentWeatherData(location : String) = viewModelScope.launch {
         try {
-            currentWeatherLiveData.postValue(getCurrentWeatherUseCase.execute(location))
+            if (isNetworkAvailable(app)){
+                currentWeatherLiveData.postValue(getCurrentWeatherUseCase.execute(location))
+            }else{
+                Toast.makeText(app, "Network Problem CURRENT", Toast.LENGTH_SHORT).show()
+            }
+            
         }catch (ex : Exception){
             Log.d("WEATHER VIEW MODEL CURRENT" , "Error = " + ex.message)
         }
@@ -33,7 +45,12 @@ class WeatherViewModel(
 
     fun getWeatherForecast(location: String) = viewModelScope.launch {
         try {
-            weatherForecastLiveData.postValue(getWeatherForecastUseCase.execute(location))
+            if (isNetworkAvailable(app)){
+                weatherForecastLiveData.postValue(getWeatherForecastUseCase.execute(location))
+            }else{
+                Toast.makeText(app, "Network Problem FORECAST", Toast.LENGTH_SHORT).show()
+            }
+
         }catch (ex : Exception){
             Log.d("WEATHER VIEW MODEL FORECAST" , "Error = " + ex.message)
         }
@@ -43,9 +60,41 @@ class WeatherViewModel(
 
     fun getAstroDetails(date : String , location: String) = viewModelScope.launch {
         try {
-           astroDetailsLiveData.postValue(getAstroDetailsUseCase.execute(date, location))
+            if (isNetworkAvailable(app)){
+                astroDetailsLiveData.postValue(getAstroDetailsUseCase.execute(date, location))
+            }else{
+                Toast.makeText(app, "Network Problem ASTRO", Toast.LENGTH_SHORT).show()
+            }
         }catch (ex : Exception){
             Log.d("WEATHER VIEW MODEL ASTRO" , "Error = " + ex.message)
         }
+    }
+
+    private fun isNetworkAvailable(context: Context?):Boolean{
+        if (context == null) return false
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+            if (capabilities != null) {
+                when {
+                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> {
+                        return true
+                    }
+                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> {
+                        return true
+                    }
+                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> {
+                        return true
+                    }
+                }
+            }
+        } else {
+            val activeNetworkInfo = connectivityManager.activeNetworkInfo
+            if (activeNetworkInfo != null && activeNetworkInfo.isConnected) {
+                return true
+            }
+        }
+        return false
+
     }
 }

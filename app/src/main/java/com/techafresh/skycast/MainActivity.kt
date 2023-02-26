@@ -5,6 +5,10 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.location.*
+import android.media.tv.AdRequest
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -34,7 +38,7 @@ class MainActivity : AppCompatActivity() {
     // Location
     private val requestcode = 22
 //    lateinit var geocoder: Geocoder
-//    lateinit var listAddress : List<Address>
+    lateinit var listAddress : List<Address>
     lateinit var locationManager: LocationManager
     lateinit var locationListener: LocationListener
     lateinit var userLocation : Location
@@ -56,6 +60,8 @@ class MainActivity : AppCompatActivity() {
         editor.putBoolean("isFirstTimer", firstTimer)
         editor.apply()
 
+        // Checking if network is available
+
         // Initializing the ViewModel
         weatherViewModel = ViewModelProvider(this, weatherViewModelFactory)[WeatherViewModel::class.java]
 
@@ -71,41 +77,30 @@ class MainActivity : AppCompatActivity() {
             override fun onLocationChanged(location: Location) {
 
                 val geocoder = Geocoder(applicationContext, Locale.getDefault())
-                val listAddress = geocoder.getFromLocation(location.latitude, location.longitude, 1)
+
+                try {
+                    if (isNetworkAvailable(applicationContext)){
+                        listAddress = geocoder.getFromLocation(location.latitude, location.longitude, 1)!!
+
+                        // Current Weather
+                        weatherViewModel.getCurrentWeatherData(listAddress!![0].locality)
+
+                        // Forecast Weather
+                        weatherViewModel.getWeatherForecast(listAddress[0].locality)
+
+                        // Astro
+                        weatherViewModel.getAstroDetails(currentDate, listAddress[0].locality)
+
+                    }else{
+                        Toast.makeText(applicationContext, "Internet Connection Problem", Toast.LENGTH_SHORT).show()
+                        Log.d("MYTAG", "Internet Connection Problem")
+                    }
+                }catch (ex : Exception){
+                    Log.d("MYTAG GEOCODER" ," Exception = ${ex.message}")
+                }
                 userLocation = location
-
-                // Current Weather
-                weatherViewModel.getCurrentWeatherData(listAddress!![0].locality)
-                weatherViewModel.currentWeatherLiveData.observe(this@MainActivity, Observer {
-                    try {
-                        Log.d("MYTAG CURRENT", it.body().toString())
-                    } catch (ex: Exception) {
-                        Log.d("MAINACTIVITY CURRENT", "Error = " + ex.message)
-                    }
-                })
-
-                // Forecast Weather
-                weatherViewModel.getWeatherForecast(listAddress[0].locality)
-                weatherViewModel.weatherForecastLiveData.observe(this@MainActivity , Observer {
-                    try {
-                        Log.d("MYTAG FORECAST", it.body().toString())
-                    } catch (ex: Exception) {
-                        Log.d("MAINACTIVITY FORECAST", "Error = " + ex.message)
-                    }
-                })
-
-                // Astro
-                weatherViewModel.getAstroDetails(currentDate, listAddress[0].locality)
-                weatherViewModel.astroDetailsLiveData.observe(this@MainActivity , Observer {
-                    try {
-                        Log.d("MYTAG ASTRO", it.body().toString())
-                    } catch (ex: Exception) {
-                        Log.d("MAINACTIVITY ASTRO", "Error = " + ex.message)
-                    }
-                })
-
-                Toast.makeText(this@MainActivity, "You are in ${listAddress[0].locality}", Toast.LENGTH_SHORT).show()
-                Log.d("MYTAG" , "City = ${listAddress[0].locality}")
+//                Toast.makeText(this@MainActivity, "You are in ${listAddress[0].locality}", Toast.LENGTH_SHORT).show()
+//                Log.d("MYTAG" , "City = ${listAddress[0].locality}")
             }
             override fun onStatusChanged(s: String, i: Int, bundle: Bundle) {}
             override fun onProviderEnabled(s: String) {}
@@ -153,6 +148,34 @@ class MainActivity : AppCompatActivity() {
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER , 500000 , 0F,locationListener)
     }
 
+    private fun isNetworkAvailable(context: Context?):Boolean{
+        if (context == null) return false
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+            if (capabilities != null) {
+                when {
+                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> {
+                        return true
+                    }
+                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> {
+                        return true
+                    }
+                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> {
+                        return true
+                    }
+                }
+            }
+        } else {
+            val activeNetworkInfo = connectivityManager.activeNetworkInfo
+            if (activeNetworkInfo != null && activeNetworkInfo.isConnected) {
+                return true
+            }
+        }
+        return false
+
+    }
+
     @SuppressLint("MissingSuperCall")
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -168,6 +191,4 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
-
 }

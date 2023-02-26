@@ -1,5 +1,6 @@
 package com.techafresh.skycast.presentation.hilt
 
+import android.app.Application
 import com.techafresh.skycast.domain.usecases.GetAstroDetailsUseCase
 import com.techafresh.skycast.domain.usecases.GetCurrentWeatherUseCase
 import com.techafresh.skycast.domain.usecases.GetWeatherForecastUseCase
@@ -16,7 +17,7 @@ class FactoryModule {
 
     @Provides
     @Singleton
-    fun provideFactory(getCurrentWeatherUseCase: GetCurrentWeatherUseCase , getWeatherForecastUseCase: GetWeatherForecastUseCase , getAstroDetailsUseCase: GetAstroDetailsUseCase) : WeatherViewModelFactory{
-        return WeatherViewModelFactory(getCurrentWeatherUseCase , getWeatherForecastUseCase , getAstroDetailsUseCase)
+    fun provideFactory(application: Application,getCurrentWeatherUseCase: GetCurrentWeatherUseCase , getWeatherForecastUseCase: GetWeatherForecastUseCase , getAstroDetailsUseCase: GetAstroDetailsUseCase) : WeatherViewModelFactory{
+        return WeatherViewModelFactory(application,getCurrentWeatherUseCase , getWeatherForecastUseCase , getAstroDetailsUseCase)
     }
 }

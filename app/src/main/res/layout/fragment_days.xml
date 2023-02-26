@@ -54,7 +54,7 @@
             android:textStyle="italic|bold" />
 
         <TextView
-            android:id="@+id/textViewLocation2"
+            android:id="@+id/textViewRegion"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
