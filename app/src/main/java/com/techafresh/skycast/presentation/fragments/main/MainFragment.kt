@@ -8,10 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.bumptech.glide.Glide
 import com.techafresh.skycast.MainActivity
 import com.techafresh.skycast.R
 import com.techafresh.skycast.databinding.FragmentMainBinding
+import com.techafresh.skycast.presentation.adapters.HoursAdapter
 import com.techafresh.skycast.presentation.viewmodel.WeatherViewModel
 import java.text.SimpleDateFormat
 
@@ -21,6 +23,8 @@ class MainFragment : Fragment() {
     lateinit var binding : FragmentMainBinding
 
     lateinit var viewModel: WeatherViewModel
+
+    lateinit var hoursAdapter: HoursAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,13 +39,14 @@ class MainFragment : Fragment() {
         binding = FragmentMainBinding.bind(view)
         viewModel = (activity as MainActivity).weatherViewModel
 
+
         binding.textView7Days.setOnClickListener{
             it.findNavController().navigate(R.id.action_mainFragment_to_daysFragment)
         }
 
         viewModel.astroDetailsLiveData.observe(viewLifecycleOwner , Observer {
             try {
-                Log.d("MYTAG ASTRO MAIN FRAGMENT", it.body().toString())
+//                Log.d("MYTAG ASTRO MAIN FRAGMENT", it.body().toString())
             } catch (ex: Exception) {
                 Log.d("MAINFRAGMENT ASTRO", "Error = " + ex.message)
             }
@@ -69,6 +74,24 @@ class MainFragment : Fragment() {
                 Log.d("MAINACTIVITY CURRENT", "Error = " + ex.message)
             }
         })
+
+        viewModel.weatherForecastLiveData.observe(viewLifecycleOwner , Observer {
+            hoursAdapter = HoursAdapter(it.body()!!.forecast.forecastday[0].hour)
+            initRecyclerview(hoursAdapter)
+            try {
+//                val hour = it.body().forecast.forecastday[0].hour[0].cloud
+//                Log.d("MYTAG FORECAST", it.body().toString())
+            } catch (ex: Exception) {
+                Log.d("MAINACTIVITY FORECAST", "Error = " + ex.message)
+            }
+        })
+    }
+
+    private fun initRecyclerview(hoursAdapter: HoursAdapter){
+        binding.rV.apply {
+            adapter = hoursAdapter
+            layoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL)
+        }
     }
 
     private fun formatDate(localTime : String) : String{

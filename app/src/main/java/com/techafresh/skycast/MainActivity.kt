@@ -145,7 +145,7 @@ class MainActivity : AppCompatActivity() {
             )
             return
         }
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER , 500000 , 0F,locationListener)
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER , 30000 , 0F,locationListener)
     }
 
     private fun isNetworkAvailable(context: Context?):Boolean{
