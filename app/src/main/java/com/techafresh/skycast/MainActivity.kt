@@ -49,6 +49,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        supportActionBar!!.hide()
+
         sharedPreferences = this.getSharedPreferences("First_Timer_Checker", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         editor.putBoolean("isFirstTimer", firstTimer)
@@ -59,8 +61,9 @@ class MainActivity : AppCompatActivity() {
 
         // Date....
         calendar = Calendar.getInstance()
-        simpleDateFormat = SimpleDateFormat("yyyy/mm/dd")
+        simpleDateFormat = SimpleDateFormat("yyyy/MM/dd")
         currentDate = simpleDateFormat.format(calendar.time)
+        Log.d("MYTAG DATE", " Current Date = ${currentDate.toString()}")
 
         // Location TINZ
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -82,7 +85,7 @@ class MainActivity : AppCompatActivity() {
                 })
 
                 // Forecast Weather
-                weatherViewModel.getWeatherForecast(listAddress!![0].locality)
+                weatherViewModel.getWeatherForecast(listAddress[0].locality)
                 weatherViewModel.weatherForecastLiveData.observe(this@MainActivity , Observer {
                     try {
                         Log.d("MYTAG FORECAST", it.body().toString())
@@ -92,7 +95,7 @@ class MainActivity : AppCompatActivity() {
                 })
 
                 // Astro
-                weatherViewModel.getAstroDetails(currentDate , listAddress!![0].locality)
+                weatherViewModel.getAstroDetails(currentDate, listAddress[0].locality)
                 weatherViewModel.astroDetailsLiveData.observe(this@MainActivity , Observer {
                     try {
                         Log.d("MYTAG ASTRO", it.body().toString())
@@ -102,7 +105,7 @@ class MainActivity : AppCompatActivity() {
                 })
 
                 Toast.makeText(this@MainActivity, "You are in ${listAddress[0].locality}", Toast.LENGTH_SHORT).show()
-                Log.d("MYTAG" , "City = $location.")
+                Log.d("MYTAG" , "City = ${listAddress[0].locality}")
             }
             override fun onStatusChanged(s: String, i: Int, bundle: Bundle) {}
             override fun onProviderEnabled(s: String) {}

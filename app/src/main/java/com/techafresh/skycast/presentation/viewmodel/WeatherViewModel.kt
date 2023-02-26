@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.techafresh.skycast.data.dataClasses.current.Current
-import com.techafresh.skycast.data.dataClasses.forecast.Astro
+import com.techafresh.skycast.data.dataClasses.astronomy.Astro
 import com.techafresh.skycast.data.dataClasses.forecast.Forecast
 import com.techafresh.skycast.domain.repository.Repository
 import com.techafresh.skycast.domain.usecases.GetAstroDetailsUseCase

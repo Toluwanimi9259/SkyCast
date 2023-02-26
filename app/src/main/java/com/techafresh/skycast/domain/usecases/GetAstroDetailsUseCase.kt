@@ -1,6 +1,6 @@
 package com.techafresh.skycast.domain.usecases
 
-import com.techafresh.skycast.data.dataClasses.forecast.Astro
+import com.techafresh.skycast.data.dataClasses.astronomy.Astro
 import com.techafresh.skycast.domain.repository.Repository
 import retrofit2.Response
 
