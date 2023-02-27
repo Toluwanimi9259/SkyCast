@@ -10,6 +10,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.bumptech.glide.Glide
+import com.squareup.picasso.Picasso
 import com.techafresh.skycast.MainActivity
 import com.techafresh.skycast.R
 import com.techafresh.skycast.databinding.FragmentMainBinding
@@ -56,7 +57,7 @@ class MainFragment : Fragment() {
             try {
                 Log.d("MYTAG CURRENT", it.body().toString())
                 binding.textViewCondition.text = it.body()!!.current.condition.text
-                binding.textViewLocation.text = it.body()!!.location.name
+                binding.textViewLocation.text = it.body()!!.location.name+", "
                 binding.textViewRegion.text = it.body()!!.location.region
 //                Glide
 //                    .with(binding.textViewLocation.context)
@@ -69,6 +70,10 @@ class MainFragment : Fragment() {
                 binding.textViewAirPressure.text = it.body()!!.current.pressure_mb.toString()
                 binding.textViewWind.text = it.body()!!.current.wind_kph.toString()+" km/hr"
                 binding.textViewVisibility.text = it.body()!!.current.vis_km.toString()+" km"
+                Picasso.get()
+                    .load("https:"+it.body()!!.current.condition.icon)
+                    .placeholder(R.drawable.suncloudmidrain)
+                    .into(binding.imageViewCondition)
 
             } catch (ex: Exception) {
                 Log.d("MAINACTIVITY CURRENT", "Error = " + ex.message)

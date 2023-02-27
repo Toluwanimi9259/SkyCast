@@ -10,10 +10,10 @@
 
     <ImageView
         android:id="@+id/imageViewCondition2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="198dp"
+        android:layout_height="196dp"
         android:layout_marginTop="24dp"
-        android:scaleType="center"
+        android:scaleType="fitCenter"
         android:src="@drawable/suncloudmidrain"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -45,7 +45,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/textViewLocation"
+            android:id="@+id/textViewLocation2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Ibadan, "
@@ -54,7 +54,7 @@
             android:textStyle="italic|bold" />
 
         <TextView
-            android:id="@+id/textViewRegion"
+            android:id="@+id/textViewRegion2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

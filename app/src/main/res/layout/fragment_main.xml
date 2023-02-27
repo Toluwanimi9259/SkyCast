@@ -12,8 +12,8 @@
 
     <ImageView
         android:id="@+id/imageViewCondition"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="198dp"
+        android:layout_height="196dp"
         android:layout_marginTop="24dp"
         android:scaleType="center"
         android:src="@drawable/suncloudmidrain"
