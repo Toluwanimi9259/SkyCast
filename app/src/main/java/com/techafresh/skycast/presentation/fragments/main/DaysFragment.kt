@@ -8,10 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.squareup.picasso.Picasso
 import com.techafresh.skycast.MainActivity
 import com.techafresh.skycast.R
 import com.techafresh.skycast.databinding.FragmentDaysBinding
+import com.techafresh.skycast.presentation.adapters.DaysAdapter
 import com.techafresh.skycast.presentation.viewmodel.WeatherViewModel
 import java.text.SimpleDateFormat
 
@@ -21,6 +23,8 @@ class DaysFragment : Fragment() {
     lateinit var binding: FragmentDaysBinding
 
     lateinit var viewModel: WeatherViewModel
+
+    lateinit var daysAdapter: DaysAdapter
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -54,6 +58,21 @@ class DaysFragment : Fragment() {
             }
         })
 
+        viewModel.weatherForecastLiveData.observe(viewLifecycleOwner , Observer {
+            try {
+                initRV(DaysAdapter(it.body()!!.forecast.forecastday))
+            }catch (ex : Exception){
+                Log.d("MYTAG DAYS FRAGMENT FORECAST" , "Error = ${ex.message}")
+            }
+        })
+
+    }
+
+    private fun initRV(daysAdapter: DaysAdapter){
+        binding.rV2.apply {
+            adapter = daysAdapter
+            layoutManager = LinearLayoutManager(activity)
+        }
     }
 
     private fun formatDate(localTime : String) : String{

@@ -81,7 +81,10 @@ class MainFragment : Fragment() {
         })
 
         viewModel.weatherForecastLiveData.observe(viewLifecycleOwner , Observer {
-            hoursAdapter = HoursAdapter(it.body()!!.forecast.forecastday[0].hour)
+            // Getting current hour
+            val localTime = it.body()!!.location.localtime.substring(11)
+            val currentHour = localTime.substring(0,2)
+            hoursAdapter = HoursAdapter(it.body()!!.forecast.forecastday[0].hour , currentHour)
             initRecyclerview(hoursAdapter)
             try {
 //                val hour = it.body().forecast.forecastday[0].hour[0].cloud

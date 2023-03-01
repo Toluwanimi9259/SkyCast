@@ -22,3 +22,15 @@ fun main() {
 
 
 }
+
+fun main(args: Array<String>) {
+    val strDate = "2023-02-25"
+    val formatter = SimpleDateFormat("E, dd MMM")
+    val formatte2r = SimpleDateFormat("yyyy-MM-dd")
+    val ogDate = formatte2r.parse(strDate)
+    val nDate = formatter.format(ogDate)
+    System.out.println(nDate.substring(0,4))
+    System.out.println(nDate.substring(5))
+
+
+}

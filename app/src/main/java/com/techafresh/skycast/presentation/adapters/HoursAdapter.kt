@@ -11,7 +11,7 @@ import com.techafresh.skycast.data.dataClasses.forecast.Forecastday
 import com.techafresh.skycast.data.dataClasses.forecast.Hour
 import com.techafresh.skycast.databinding.CardItemBinding
 
-class HoursAdapter(private val hours : List<Hour>) : RecyclerView.Adapter<HoursAdapter.DaysViewHolder>() {
+class HoursAdapter(private val hours : List<Hour> , private val currentHour : String) : RecyclerView.Adapter<HoursAdapter.DaysViewHolder>() {
 
     inner class DaysViewHolder(private val binding: CardItemBinding) : RecyclerView.ViewHolder(binding.root){
 
@@ -20,14 +20,15 @@ class HoursAdapter(private val hours : List<Hour>) : RecyclerView.Adapter<HoursA
             Picasso.get().load("https:"+hour.condition.icon).placeholder(R.drawable.cloudzap).into(binding.imageViewCondition4)
             Log.d("MYTAG IMAGE URL = " , hour.condition.icon)
 //            Glide.with(binding.textViewTemp.context).load("http://goo.gl/gEgYUd").placeholder(R.drawable.cloudzap).into(binding.imageViewCondition4)
-            binding.textViewTemp.text = hour.temp_c.toString()
+            binding.textViewTemp.text = hour.temp_c.toString()+"℃"
         }
         private fun formatTime(localTime: String) : String{
             val am = "AM"
             val pm = "PM"
             var cTime = "00:00 AM"
-            val time = localTime.substring(11) // 13:15
-            return if(time == "00:00"){
+            val time = localTime.substring(11) // 13:00
+            val hour = time.substring(0,2) // 13
+            return if(hour == currentHour){
                 "Now"
             }else{
                 time

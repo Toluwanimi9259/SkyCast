@@ -83,7 +83,7 @@ class MainActivity : AppCompatActivity() {
                         listAddress = geocoder.getFromLocation(location.latitude, location.longitude, 1)!!
 
                         // Current Weather
-                        weatherViewModel.getCurrentWeatherData(listAddress!![0].locality)
+                        weatherViewModel.getCurrentWeatherData(listAddress[0].locality)
 
                         // Forecast Weather
                         weatherViewModel.getWeatherForecast(listAddress[0].locality)
