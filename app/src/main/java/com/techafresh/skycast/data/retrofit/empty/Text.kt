@@ -29,8 +29,22 @@ fun main(args: Array<String>) {
     val formatte2r = SimpleDateFormat("yyyy-MM-dd")
     val ogDate = formatte2r.parse(strDate)
     val nDate = formatter.format(ogDate)
-    System.out.println(nDate.substring(0,4))
-    System.out.println(nDate.substring(5))
+//    System.out.println(nDate.substring(0,4))
+//    System.out.println(nDate.substring(5))
+
+    val temp = "100.5"
+    val tt = temp.replace('.' , ' ')
+    val index = temp.lastIndexOf('.')
+    val tt2 = temp.substring(0,index)
+    var prefix = tt2.toInt()
+    val sufix = temp.substring(index+1)
+    val suffix = sufix.toInt()
+    var tempX = tt2
+    if (suffix >= 5){
+        prefix += 1
+        tempX = prefix.toString()
+    }
+    System.out.println("|||"+tempX+"|||")
 
 
 }

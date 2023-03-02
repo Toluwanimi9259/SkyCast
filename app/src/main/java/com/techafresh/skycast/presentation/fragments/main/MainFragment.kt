@@ -1,5 +1,6 @@
 package com.techafresh.skycast.presentation.fragments.main
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -35,6 +36,7 @@ class MainFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_main, container, false)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentMainBinding.bind(view)
@@ -64,8 +66,8 @@ class MainFragment : Fragment() {
 //                    .load(it.body()!!.current.condition.icon)
 //                    .into(binding.imageViewCondition)
                 binding.textViewDate.text = formatDate(it.body()!!.location.localtime)
-                binding.textViewTemperature.text = it.body()!!.current.temp_c.toString()+"℃"
-                binding.textViewTime.text = formatTime(it.body()!!.location.localtime)
+                binding.textViewTemperature.text = formatTemp(it.body()!!.current.temp_c)+"℃"
+                binding.textViewTime.text = "Last Updated: " + formatTime(it.body()!!.location.localtime)
                 binding.textViewHumidity.text = it.body()!!.current.humidity.toString()+"%"
                 binding.textViewAirPressure.text = it.body()!!.current.pressure_mb.toString()
                 binding.textViewWind.text = it.body()!!.current.wind_kph.toString()+" km/hr"
@@ -132,5 +134,21 @@ class MainFragment : Fragment() {
             cTime = "$time $am"
             "$time $am"
         }
+    }
+
+    private fun formatTemp(temp : Double) : String{
+        val temperature = temp.toString()
+        val index = temperature.lastIndexOf('.')
+        val prefix = temperature.substring(0,index)
+        val suffix = temperature.substring(index+1)
+        val prefixI = prefix.toInt()
+        val suffixI = suffix.toInt()
+
+        return if (suffixI >= 5){
+            "${prefixI+1}"
+        }else{
+            prefix
+        }
+
     }
 }

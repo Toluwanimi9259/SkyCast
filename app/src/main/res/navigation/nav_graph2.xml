@@ -12,7 +12,12 @@
         tools:layout="@layout/fragment_main" >
         <action
             android:id="@+id/action_mainFragment_to_daysFragment"
-            app:destination="@id/daysFragment" />
+            app:destination="@id/daysFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/slide_in_left" />
+        <action
+            android:id="@+id/action_mainFragment_to_detailFragment"
+            app:destination="@id/detailFragment" />
     </fragment>
     <fragment
         android:id="@+id/daysFragment"
@@ -21,6 +26,15 @@
         tools:layout="@layout/fragment_days" >
         <action
             android:id="@+id/action_daysFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/detailFragment"
+        android:name="com.techafresh.skycast.presentation.fragments.details.DetailFragment"
+        android:label="fragment_detail"
+        tools:layout="@layout/fragment_detail" >
+        <action
+            android:id="@+id/action_detailFragment_to_mainFragment"
             app:destination="@id/mainFragment" />
     </fragment>
 </navigation>
