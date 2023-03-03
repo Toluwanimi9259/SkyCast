@@ -46,6 +46,9 @@ class MainFragment : Fragment() {
         binding.textView7Days.setOnClickListener{
             it.findNavController().navigate(R.id.action_mainFragment_to_daysFragment)
         }
+        binding.knowMoreBtn.setOnClickListener {
+            it.findNavController().navigate(R.id.action_mainFragment_to_detailFragment)
+        }
 
         viewModel.astroDetailsLiveData.observe(viewLifecycleOwner , Observer {
             try {
