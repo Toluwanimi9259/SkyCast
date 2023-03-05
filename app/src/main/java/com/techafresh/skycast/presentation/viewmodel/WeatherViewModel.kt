@@ -27,6 +27,9 @@ class WeatherViewModel(
     private val getAstroDetailsUseCase: GetAstroDetailsUseCase
 ) : ViewModel() {
 
+    var backGround : MutableLiveData<Int> = MutableLiveData()
+    var colorX : MutableLiveData<String> = MutableLiveData()
+
     val currentWeatherLiveData : MutableLiveData<Response<Current>> = MutableLiveData()
     fun getCurrentWeatherData(location : String) = viewModelScope.launch {
         try {

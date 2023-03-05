@@ -49,6 +49,8 @@ class MainActivity : AppCompatActivity() {
     lateinit var currentDate : String
 
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -60,10 +62,14 @@ class MainActivity : AppCompatActivity() {
         editor.putBoolean("isFirstTimer", firstTimer)
         editor.apply()
 
-        // Checking if network is available
+        val background : Int = intent.getIntExtra("background" , R.drawable.daystorm)
+        val color : String = intent.getStringExtra("color")!!
+        Log.d("MYTAG SHIIIT " , "BACKGROUND =$background , Color = $color")
 
         // Initializing the ViewModel
         weatherViewModel = ViewModelProvider(this, weatherViewModelFactory)[WeatherViewModel::class.java]
+        weatherViewModel.backGround.value = background
+        weatherViewModel.colorX.value = color
 
         // Date....
         calendar = Calendar.getInstance()

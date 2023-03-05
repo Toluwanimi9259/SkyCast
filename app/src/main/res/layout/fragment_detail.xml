@@ -10,7 +10,6 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@drawable/sps1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -158,7 +157,7 @@
                 android:id="@+id/imageViewConditionX"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:layout_marginLeft="20dp"
+                android:layout_marginLeft="10dp"
                 android:src="@drawable/mooncloudfastwind" />
 
             <TextView
@@ -181,10 +180,10 @@
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_width="405dp"
+            android:layout_height="332dp"
             android:elevation="20dp"
-            app:cardBackgroundColor="@android:color/transparent"
+            app:cardBackgroundColor="@color/sd"
             app:cardCornerRadius="30dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -244,8 +243,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
                             android:text="% Rain"
-                            android:textAlignment="center
-"
+                            android:textAlignment="center"
                             android:textColor="@color/white"
                             android:textSize="15sp"
                             android:textStyle="bold" />
@@ -289,8 +287,8 @@
                         android:layout_width="54dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="15dp"
-                        android:orientation="vertical"
                         android:gravity="center"
+                        android:orientation="vertical"
                         tools:layout_editor_absoluteX="10dp"
                         tools:layout_editor_absoluteY="440dp">
 
