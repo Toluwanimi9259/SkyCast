@@ -40,6 +40,7 @@ class SplashActivity : AppCompatActivity() {
 
 
         generatedBackground = generateRandomBackground()
+//        generatedBackground = R.drawable.back35
 
 
         Log.d("MYTAG SPLASH ACTIVITY" , "Generated = $generatedBackground , Color = ${changeUI(generatedBackground)}")
@@ -51,7 +52,7 @@ class SplashActivity : AppCompatActivity() {
         Handler().postDelayed(Runnable {
             checkFirstTimer()
             finish()
-        }, 3000)
+        }, 4000)
 
     }
 
@@ -67,29 +68,25 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun generateRandomBackground() : Int{
-        return when(java.util.Random().nextInt(15)){
-            0 -> R.drawable.back20
-            1 -> R.drawable.back21
-            2 -> R.drawable.back22
-            3 -> R.drawable.back23
-            4 -> R.drawable.back24
-            5 -> R.drawable.back25
-            6 -> R.drawable.back26
-            7 -> R.drawable.back27
-            8 -> R.drawable.back28
-            9 -> R.drawable.back29
-            10 -> R.drawable.back30
-            11 -> R.drawable.back31
-            12 -> R.drawable.back32
-            13 -> R.drawable.back35
-            14 -> R.drawable.sps1
+        return when(java.util.Random().nextInt(11)){
+            0 -> R.drawable.back21
+            1 -> R.drawable.back22
+            2 -> R.drawable.back23
+            3 -> R.drawable.back24
+            4 -> R.drawable.back27
+            5 -> R.drawable.back29
+            6 -> R.drawable.back30
+            7 -> R.drawable.back31
+            8 -> R.drawable.back32
+            9 -> R.drawable.back35
+            10 -> R.drawable.sps1
 
             else -> R.drawable.sps1
         }
     }
 
     private fun changeUI(generatedBackground : Int) : String{
-        return if (generatedBackground == 20 || generatedBackground == 23 || generatedBackground == 25 || generatedBackground == 35){
+        return if (generatedBackground == R.drawable.back20 || generatedBackground == R.drawable.back23 || generatedBackground == R.drawable.back25 || generatedBackground == R.drawable.back35){
             "GREEN"
         }else{
             "NOT GREEN"

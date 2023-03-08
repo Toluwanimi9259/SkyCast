@@ -63,8 +63,8 @@ class MainActivity : AppCompatActivity() {
         editor.apply()
 
         val background : Int = intent.getIntExtra("background" , R.drawable.daystorm)
-        val color : String = intent.getStringExtra("color")!!
-        Log.d("MYTAG SHIIIT " , "BACKGROUND =$background , Color = $color")
+        val color : String = intent.getStringExtra("color").toString()
+//        Log.d("MYTAG SHIIIT " , "BACKGROUND =$background , Color = $color")
 
         // Initializing the ViewModel
         weatherViewModel = ViewModelProvider(this, weatherViewModelFactory)[WeatherViewModel::class.java]

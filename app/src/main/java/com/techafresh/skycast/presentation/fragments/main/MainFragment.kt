@@ -47,6 +47,14 @@ class MainFragment : Fragment() {
         val color = viewModel.colorX
         Log.d("MTAG MAIN FRAGMENT" , "Background = ${backGround.value} Color = ${color.value}")
 
+//        if (color.value == "GREEN"){
+////            binding.cardViewMain.setCardBackgroundColor(resources.getColor(R.color.sd))
+//            binding.knowMoreBtn.setBackgroundResource(R.drawable.roujn)
+////            binding.rV.setBackgroundColor(resources.getColor(R.color.sd))
+//        }else {
+//            binding.knowMoreBtn.setBackgroundColor(R.drawable.know_morebtn)
+//        }
+
         try {
             backGround.value?.let { binding.frameLayout4.setBackgroundResource(it) }
         }catch (wx : Exception){
@@ -99,7 +107,9 @@ class MainFragment : Fragment() {
             // Getting current hour
             val localTime = it.body()!!.location.localtime.substring(11)
             val currentHour = localTime.substring(0,2)
-            hoursAdapter = HoursAdapter(it.body()!!.forecast.forecastday[0].hour , currentHour)
+            hoursAdapter = HoursAdapter(it.body()!!.forecast.forecastday[0].hour , currentHour ,
+                viewModel.colorX.value.toString()
+            )
             initRecyclerview(hoursAdapter)
             try {
 //                val hour = it.body().forecast.forecastday[0].hour[0].cloud

@@ -35,6 +35,10 @@ class DetailFragment : Fragment() {
         binding = FragmentDetailBinding.bind(view)
         viewModel = (activity as MainActivity).weatherViewModel
 
+//        if (viewModel.colorX.value == "GREEN"){
+////            binding.cardViewDetail.setCardBackgroundColor(resources.getColor(R.color.sd))
+//        }
+
         try {
             viewModel.backGround.value?.let { binding.frameLayout6.setBackgroundResource(it) }
         }catch (wx : Exception){
@@ -48,15 +52,21 @@ class DetailFragment : Fragment() {
         viewModel.astroDetailsLiveData.observe(viewLifecycleOwner , Observer {
             binding.textViewSunriseTime.text = it.body()!!.astronomy.astro.sunset
             binding.textViewTimeSunset.text = it.body()!!.astronomy.astro.sunrise
+            binding.textViewIsMoonUp.text = it.body()!!.astronomy.astro.is_moon_up.toString()
+            binding.textViewMoonBrightness.text = it.body()!!.astronomy.astro.moon_illumination + "% "
+//            binding.textViewMoonPhase.text = it.body()!!.astronomy.astro.moon_phase.substring()
         })
 
         viewModel.currentWeatherLiveData.observe(viewLifecycleOwner , Observer {
+
             binding.textViewLocationX.text = it.body()!!.location.name+", "
             binding.textViewRegionX.text = it.body()!!.location.region
+
             Picasso.get()
                 .load(formatImage(it.body()!!.current.condition.code , it.body()!!.current.is_day))
                 .placeholder(R.drawable.fetcher)
                 .into(binding.imageViewConditionX)
+
             binding.textViewTemperatureX.text = formatTemp(it.body()!!.current.temp_c)+"℃"
             binding.textViewTimeX.text = "Last Updated: " + formatTime(it.body()!!.location.localtime)
 
@@ -72,7 +82,10 @@ class DetailFragment : Fragment() {
         })
 
         viewModel.weatherForecastLiveData.observe(viewLifecycleOwner , Observer {
+            val localTime = it.body()!!.location.localtime.substring(11)
+            val currentHour = localTime.substring(0,2)
             binding.textViewRain.text = it.body()!!.forecast.forecastday[0].day.daily_chance_of_rain.toString()+"%"
+            binding.textViewIsDay.text = it.body()!!.forecast.forecastday[0].hour[currentHour.toInt()].is_day.toString()
 
         })
 

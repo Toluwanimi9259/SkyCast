@@ -9,14 +9,15 @@
 
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/cardViewHour"
         android:layout_width="100dp"
         android:layout_height="125dp"
+        app:cardBackgroundColor="@android:color/transparent"
+        app:cardCornerRadius="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:cardCornerRadius="20dp"
-        app:cardBackgroundColor="@android:color/transparent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" >
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -27,10 +28,10 @@
                 android:id="@+id/imageViewCondition4"
                 android:layout_width="70dp"
                 android:layout_height="65dp"
+                android:scaleType="fitXY"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                android:scaleType="fitXY"
                 app:layout_constraintTop_toBottomOf="@+id/textViewHour"
                 app:srcCompat="@drawable/cloudzap" />
 

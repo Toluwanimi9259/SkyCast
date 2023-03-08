@@ -40,6 +40,10 @@ class DaysFragment : Fragment() {
         binding = FragmentDaysBinding.bind(view)
         viewModel = (activity as MainActivity).weatherViewModel
 
+//        if (viewModel.colorX.value == "GREEN"){
+////            binding.cardViewDays.setCardBackgroundColor(resources.getColor(R.color.sd))
+//        }
+
         try {
             viewModel.backGround.value?.let { binding.frameLayout5.setBackgroundResource(it) }
         }catch (wx : Exception){

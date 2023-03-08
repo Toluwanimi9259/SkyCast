@@ -28,7 +28,10 @@ class Screen3Fragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentScreen3Binding.bind(view)
         binding.continueButton.setOnClickListener {
-            startActivity(Intent(activity , MainActivity::class.java))
+            startActivity(Intent(activity , MainActivity::class.java)
+                .putExtra("background" , R.drawable.splash)
+                .putExtra("color" , "NOT GREEN")
+            )
         }
     }
 }

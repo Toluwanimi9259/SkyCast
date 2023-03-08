@@ -5,6 +5,7 @@
     android:id="@+id/frameLayout6"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/back22"
     tools:context=".presentation.fragments.details.DetailFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -157,8 +158,7 @@
                 android:id="@+id/imageViewConditionX"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:layout_marginLeft="10dp"
-                android:src="@drawable/mooncloudfastwind" />
+                android:layout_marginLeft="10dp"/>
 
             <TextView
                 android:id="@+id/textViewTemperatureX"
@@ -179,11 +179,14 @@
         </LinearLayout>
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/cardView"
-            android:layout_width="405dp"
-            android:layout_height="332dp"
+            android:id="@+id/cardViewDetail"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="4dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
             android:elevation="20dp"
-            app:cardBackgroundColor="@color/sd"
+            app:cardBackgroundColor="@android:color/transparent"
             app:cardCornerRadius="30dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -360,7 +363,7 @@
                     android:id="@+id/linearLayout42"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
+                    android:layout_marginTop="20dp"
                     android:gravity="center"
                     android:orientation="horizontal"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -381,14 +384,14 @@
                             android:id="@+id/imageViewVectorXX"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/vector1" />
+                            android:src="@drawable/sunhorizon1" />
 
                         <TextView
-                            android:id="@+id/textViewHumidityXX"
+                            android:id="@+id/textViewIsDay"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
-                            android:text="75%"
+                            android:text="Day"
                             android:textAlignment="center"
                             android:textColor="@color/white"
                             android:textSize="15sp"
@@ -398,7 +401,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
-                            android:text="Humidity"
+                            android:text="Day/Night"
                             android:textColor="@color/white"
                             android:textSize="15sp"
                             android:textStyle="bold" />
@@ -406,7 +409,7 @@
 
                     <LinearLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_marginStart="20dp"
                         android:orientation="vertical"
                         tools:layout_editor_absoluteX="10dp"
@@ -416,13 +419,14 @@
                             android:id="@+id/imageViewSXX"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/ion_speedometer" />
+                            android:src="@drawable/baseline_nights_stay_24" />
 
                         <TextView
-                            android:id="@+id/textViewAirPressureXXX"
+                            android:id="@+id/textViewIsMoonUp"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="1011"
+                            android:text="No"
+                            android:layout_marginTop="6dp"
                             android:textAlignment="center"
                             android:textColor="@color/white"
                             android:textSize="15sp"
@@ -431,9 +435,10 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Air Pressure"
+                            android:text="Moon Up"
                             android:textColor="@color/white"
                             android:textSize="15sp"
+                            android:layout_marginTop="3dp"
                             android:textStyle="bold" />
                     </LinearLayout>
 
@@ -449,14 +454,14 @@
                             android:id="@+id/imageViewWindXX"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/tabler_wind2" />
+                            android:src="@drawable/baseline_nights_stay_24" />
 
                         <TextView
-                            android:id="@+id/textViewWindXX"
+                            android:id="@+id/textViewMoonBrightness"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
-                            android:text="8 km/hr"
+                            android:text="27%"
                             android:textAlignment="center"
                             android:textColor="@color/white"
                             android:textSize="15sp"
@@ -465,7 +470,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Wind"
+                            android:text="Brightness"
                             android:textAlignment="center"
                             android:textColor="@color/white"
                             android:textSize="15sp"
@@ -487,11 +492,11 @@
                             android:src="@drawable/ic_round_visibility" />
 
                         <TextView
-                            android:id="@+id/textViewVisibilityXXXX"
-                            android:layout_width="match_parent"
+                            android:id="@+id/textViewMoonPhase"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
-                            android:text="8km"
+                            android:text="Crescent  "
                             android:textAlignment="center"
                             android:textColor="@color/white"
                             android:textSize="15sp"
@@ -500,7 +505,8 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Visibility"
+                            android:text="Moon Phase"
+                            android:textAlignment="center"
                             android:textColor="@color/white"
                             android:textSize="15sp"
                             android:textStyle="bold" />
