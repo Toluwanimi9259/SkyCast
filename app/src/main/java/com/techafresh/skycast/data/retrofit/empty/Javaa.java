@@ -16,4 +16,5 @@ public class Javaa {
 
     Random rand = new Random();
     int ff = rand.nextInt();
+
 }

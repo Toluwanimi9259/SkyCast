@@ -2,31 +2,37 @@ package com.techafresh.skycast
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.location.*
-import android.media.tv.AdRequest
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.snackbar.Snackbar
+import com.techafresh.skycast.databinding.ActivityMainBinding
 import com.techafresh.skycast.presentation.viewmodel.WeatherViewModel
 import com.techafresh.skycast.presentation.viewmodel.WeatherViewModelFactory
 import dagger.hilt.android.AndroidEntryPoint
+import java.lang.reflect.InvocationTargetException
+import java.lang.reflect.Method
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private val firstTimer: Boolean = false
+    lateinit var binding: ActivityMainBinding
 
     lateinit var weatherViewModel: WeatherViewModel
 
@@ -53,8 +59,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         supportActionBar!!.hide()
 
         sharedPreferences = this.getSharedPreferences("First_Timer_Checker", Context.MODE_PRIVATE)
@@ -98,7 +104,8 @@ class MainActivity : AppCompatActivity() {
                         weatherViewModel.getAstroDetails(currentDate, listAddress[0].locality)
 
                     }else{
-                        Toast.makeText(applicationContext, "Internet Connection Problem", Toast.LENGTH_SHORT).show()
+                        makeSnackBarMessage("Internet Connection Error" , "INTERNET")
+//                        Toast.makeText(applicationContext, "Internet Connection Problem", Toast.LENGTH_SHORT).show()
                         Log.d("MYTAG", "Internet Connection Problem")
                     }
                 }catch (ex : Exception){
@@ -115,6 +122,70 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        requestLocation()
+    }
+
+    private fun isNetworkAvailable(context: Context?):Boolean{
+        if (context == null) return false
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+            if (capabilities != null) {
+                when {
+                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> {
+                        return true
+                    }
+                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> {
+                        return true
+                    }
+                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> {
+                        return true
+                    }
+                }
+            }
+        } else {
+            val activeNetworkInfo = connectivityManager.activeNetworkInfo
+            if (activeNetworkInfo != null && activeNetworkInfo.isConnected) {
+                return true
+            }
+        }
+        return false
+
+    }
+
+    @SuppressLint("MissingSuperCall")
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        if (requestCode == requestcode) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show()
+            }
+            else {
+//                Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
+                makeSnackBarMessage("Location is Off" , "LOCATION")
+            }
+        }
+    }
+
+    private fun makeSnackBarMessage(text : String , problem : String){
+        val snackbar: Snackbar = Snackbar
+            .make(binding.constMain, text, Snackbar.LENGTH_LONG)
+            .setDuration(10000)
+            .setAction("Turn On" , View.OnClickListener {
+                if (problem == "LOCATION"){
+                    requestLocation()
+                }else {
+                    turnOnInternet()
+                }
+
+            })
+        snackbar.show()
+    }
+
+    private fun requestLocation(){
         if (ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -154,47 +225,13 @@ class MainActivity : AppCompatActivity() {
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER , 30000 , 0F,locationListener)
     }
 
-    private fun isNetworkAvailable(context: Context?):Boolean{
-        if (context == null) return false
-        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            val capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
-            if (capabilities != null) {
-                when {
-                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> {
-                        return true
-                    }
-                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> {
-                        return true
-                    }
-                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> {
-                        return true
-                    }
-                }
-            }
-        } else {
-            val activeNetworkInfo = connectivityManager.activeNetworkInfo
-            if (activeNetworkInfo != null && activeNetworkInfo.isConnected) {
-                return true
-            }
-        }
-        return false
-
-    }
-
-    @SuppressLint("MissingSuperCall")
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        if (requestCode == requestcode) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show()
-            }
-            else {
-                Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
-            }
+    private fun turnOnInternet(){
+        try{
+            startActivityForResult(Intent(android.provider.Settings.ACTION_NETWORK_OPERATOR_SETTINGS) , 0)
+        }catch (ex : Exception){
+            ex.printStackTrace()
         }
     }
+
+
 }
