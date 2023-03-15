@@ -1,8 +1,11 @@
 package com.techafresh.skycast.presentation.hilt
 
-import com.techafresh.skycast.data.dataSources.RemoteDataSource
+import com.techafresh.skycast.data.dataSources.local.LocalDataSource
+import com.techafresh.skycast.data.dataSources.remote.RemoteDataSource
+import com.techafresh.skycast.data.dataSourcesImpl.LocalDataSourceImpl
 import com.techafresh.skycast.data.dataSourcesImpl.RemoteDataSourceImpl
 import com.techafresh.skycast.data.retrofit.api.WeatherApi
+import com.techafresh.skycast.data.room.dao.DayDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,7 +18,13 @@ class DataSourceModule {
 
     @Provides
     @Singleton
-    fun provideRemoteDataSource(weatherApi: WeatherApi) : RemoteDataSource{
+    fun provideRemoteDataSource(weatherApi: WeatherApi) : RemoteDataSource {
         return RemoteDataSourceImpl(weatherApi)
+    }
+
+    @Provides
+    @Singleton
+    fun provideLocalDataSource(dayDao: DayDao) : LocalDataSource{
+        return LocalDataSourceImpl(dayDao)
     }
 }

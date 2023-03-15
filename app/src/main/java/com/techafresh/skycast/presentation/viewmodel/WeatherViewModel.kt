@@ -9,14 +9,14 @@ import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import com.techafresh.skycast.data.dataClasses.current.Current
 import com.techafresh.skycast.data.dataClasses.astronomy.Astro
+import com.techafresh.skycast.data.dataClasses.forecast.Day
 import com.techafresh.skycast.data.dataClasses.forecast.Forecast
 import com.techafresh.skycast.domain.repository.Repository
-import com.techafresh.skycast.domain.usecases.GetAstroDetailsUseCase
-import com.techafresh.skycast.domain.usecases.GetCurrentWeatherUseCase
-import com.techafresh.skycast.domain.usecases.GetWeatherForecastUseCase
+import com.techafresh.skycast.domain.usecases.*
 import kotlinx.coroutines.launch
 import retrofit2.Response
 
@@ -24,7 +24,9 @@ class WeatherViewModel(
     private val app : Application,
     private val getCurrentWeatherUseCase: GetCurrentWeatherUseCase,
     private val getWeatherForecastUseCase: GetWeatherForecastUseCase,
-    private val getAstroDetailsUseCase: GetAstroDetailsUseCase
+    private val getAstroDetailsUseCase: GetAstroDetailsUseCase,
+    private val getDayForecastUseCase: GetDayForecastUseCase,
+    private val saveDayForecastUseCase: SaveDayForecastUseCase
 ) : ViewModel() {
 
     var backGround : MutableLiveData<Int> = MutableLiveData()
@@ -71,6 +73,18 @@ class WeatherViewModel(
         }catch (ex : Exception){
             Log.d("WEATHER VIEW MODEL ASTRO" , "Error = " + ex.message)
         }
+    }
+
+//    val dayForecastLiveData : MutableLiveData<List<Day>> = MutableLiveData()
+
+    fun getDayForecast() = liveData {
+        getDayForecastUseCase.execute().collect(){
+            emit(it)
+        }
+    }
+
+    fun saveDayForecast(day: Day) = viewModelScope.launch {
+        saveDayForecastUseCase.execute(day)
     }
 
     private fun isNetworkAvailable(context: Context?):Boolean{

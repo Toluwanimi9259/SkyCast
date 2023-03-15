@@ -1,6 +1,16 @@
 package com.techafresh.skycast.data.dataClasses.forecast
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
+import com.techafresh.skycast.data.room.converters.ConvertersX
+
+@Entity(tableName = "forecast_day")
 data class Day(
+
+    @PrimaryKey(autoGenerate = true)
+    val id : Int,
+
     val avghumidity: Double,
     val avgtemp_c: Double,
     val avgtemp_f: Double,

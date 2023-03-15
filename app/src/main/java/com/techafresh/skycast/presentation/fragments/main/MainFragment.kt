@@ -1,16 +1,20 @@
 package com.techafresh.skycast.presentation.fragments.main
 
 import android.annotation.SuppressLint
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.graphics.BitmapFactory
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.NotificationCompat
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.bumptech.glide.Glide
 import com.squareup.picasso.Picasso
 import com.techafresh.skycast.MainActivity
 import com.techafresh.skycast.R
@@ -27,6 +31,8 @@ class MainFragment : Fragment() {
     lateinit var viewModel: WeatherViewModel
 
     lateinit var hoursAdapter: HoursAdapter
+
+    var notificationManager:NotificationManager? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -107,6 +113,10 @@ class MainFragment : Fragment() {
             // Getting current hour
             val localTime = it.body()!!.location.localtime.substring(11)
             val currentHour = localTime.substring(0,2)
+
+            // Save Day Forecast to db
+            viewModel.saveDayForecast(it.body()!!.forecast.forecastday[0].day)
+
             hoursAdapter = HoursAdapter(it.body()!!.forecast.forecastday[0].hour , currentHour ,
                 viewModel.colorX.value.toString()
             )
@@ -470,5 +480,47 @@ class MainFragment : Fragment() {
 
 
 
+    }
+
+    fun pushNotification(
+        iconCode : Int ,
+        isDay: Int ,
+        userLocation : String ,
+        condition : String ,
+        temp_c : String ,
+        temp_f : String
+    ){
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel("1001", "FORECAST", NotificationManager.IMPORTANCE_HIGH).apply {
+                description = "WEATHER FORECAST"
+            }
+
+            notificationManager?.createNotificationChannel(channel)
+        }
+
+        // converting a jpeg file to Bitmap file and making an instance of Bitmap!
+        val imgBitmap= BitmapFactory.decodeResource(resources,formatImage(iconCode , isDay))
+
+        val notificationID = 45
+
+        // Building notification
+        val nBuilder= NotificationCompat.Builder(requireActivity().applicationContext,"1001")
+            .setContentTitle("Tomorrow in $userLocation: $condition")
+            .setContentText("$temp_c°/$temp_f See full forecast")
+            .setSmallIcon(R.drawable.baseline_notifications_active_24)
+//            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            // passing the Bitmap object as an argument
+            .setLargeIcon(imgBitmap)
+            // Expandable notification
+            .setStyle(
+                NotificationCompat.BigPictureStyle()
+                .bigPicture(imgBitmap)
+                // as we pass null in bigLargeIcon() so the large icon
+                // will goes away when the notification will be expanded.
+                .bigLargeIcon(null))
+            .build()
+
+        notificationManager?.notify(notificationID , nBuilder)
     }
 }

@@ -1,5 +1,7 @@
 package com.techafresh.skycast.data.retrofit.empty;
 
+import android.app.NotificationManager;
+
 import java.util.Random;
 
 public class Javaa {
@@ -16,5 +18,7 @@ public class Javaa {
 
     Random rand = new Random();
     int ff = rand.nextInt();
+
+//    NotificationManager mNotificationManager = (NotificationManager) getActivity().getSystemService(getActivity().NOTIICATION_SERVICE);
 
 }

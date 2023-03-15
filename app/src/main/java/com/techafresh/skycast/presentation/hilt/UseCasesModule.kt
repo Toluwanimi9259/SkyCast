@@ -1,9 +1,7 @@
 package com.techafresh.skycast.presentation.hilt
 
 import com.techafresh.skycast.domain.repository.Repository
-import com.techafresh.skycast.domain.usecases.GetAstroDetailsUseCase
-import com.techafresh.skycast.domain.usecases.GetCurrentWeatherUseCase
-import com.techafresh.skycast.domain.usecases.GetWeatherForecastUseCase
+import com.techafresh.skycast.domain.usecases.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,5 +28,17 @@ class UseCasesModule {
     @Singleton
     fun provideGetAstroDetailsUseCase(repository: Repository) : GetAstroDetailsUseCase{
         return GetAstroDetailsUseCase(repository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSaveDayForecastUseCase(repository: Repository) : SaveDayForecastUseCase{
+        return SaveDayForecastUseCase(repository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetDayForecastUseCase(repository: Repository) : GetDayForecastUseCase{
+        return GetDayForecastUseCase(repository)
     }
 }

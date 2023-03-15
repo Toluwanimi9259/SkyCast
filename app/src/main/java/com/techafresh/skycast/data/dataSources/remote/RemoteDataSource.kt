@@ -1,4 +1,4 @@
-package com.techafresh.skycast.data.dataSources
+package com.techafresh.skycast.data.dataSources.remote
 
 import com.techafresh.skycast.data.dataClasses.current.Current
 import com.techafresh.skycast.data.dataClasses.astronomy.Astro
