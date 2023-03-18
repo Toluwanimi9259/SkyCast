@@ -15,9 +15,21 @@ interface Repository {
 
     suspend fun getAstroDetails(date : String , location: String) : Response<Astro>
 
-    // Database
+    // Old Still Gonna delete if full works
 
     suspend fun saveDayForecast(day: Day)
 
     fun getDayForecast() : Flow<List<Day>>
+
+    suspend fun deleteAllDayForecast()
+
+
+    // Full Forecast
+    suspend fun saveForecast(forecast: Forecast)
+
+    suspend fun deleteForecast(forecast: Forecast)
+
+    suspend fun deleteAllForecast()
+
+    suspend fun getForecast() : Forecast
 }

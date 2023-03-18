@@ -21,5 +21,24 @@ class RepositoryImpl(private val remoteDataSource: RemoteDataSource , private va
     }
 
     override fun getDayForecast(): Flow<List<Day>> = localDataSource.getDayForecast()
+    override suspend fun deleteAllDayForecast() {
+        localDataSource.deleteAllDayForecast()
+    }
+
+    override suspend fun saveForecast(forecast: Forecast) {
+        localDataSource.saveForecast(forecast)
+    }
+
+    override suspend fun deleteForecast(forecast: Forecast) {
+        localDataSource.deleteForecast(forecast)
+    }
+
+    override suspend fun deleteAllForecast() {
+        localDataSource.deleteAllForecast()
+    }
+
+    override suspend fun getForecast(): Forecast {
+        return localDataSource.getForecast()
+    }
 
 }

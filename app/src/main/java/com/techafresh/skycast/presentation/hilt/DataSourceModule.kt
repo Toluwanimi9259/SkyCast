@@ -6,6 +6,7 @@ import com.techafresh.skycast.data.dataSourcesImpl.LocalDataSourceImpl
 import com.techafresh.skycast.data.dataSourcesImpl.RemoteDataSourceImpl
 import com.techafresh.skycast.data.retrofit.api.WeatherApi
 import com.techafresh.skycast.data.room.dao.DayDao
+import com.techafresh.skycast.data.room.dao.ForecastDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -24,7 +25,7 @@ class DataSourceModule {
 
     @Provides
     @Singleton
-    fun provideLocalDataSource(dayDao: DayDao) : LocalDataSource{
-        return LocalDataSourceImpl(dayDao)
+    fun provideLocalDataSource(dayDao: DayDao , forecastDao: ForecastDao) : LocalDataSource{
+        return LocalDataSourceImpl(dayDao, forecastDao)
     }
 }

@@ -1,5 +1,6 @@
 package com.techafresh.skycast.presentation.viewmodel
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.net.ConnectivityManager
@@ -11,11 +12,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
+import androidx.work.Data
+import com.google.gson.Gson
 import com.techafresh.skycast.data.dataClasses.current.Current
 import com.techafresh.skycast.data.dataClasses.astronomy.Astro
 import com.techafresh.skycast.data.dataClasses.forecast.Day
 import com.techafresh.skycast.data.dataClasses.forecast.Forecast
-import com.techafresh.skycast.domain.repository.Repository
 import com.techafresh.skycast.domain.usecases.*
 import kotlinx.coroutines.launch
 import retrofit2.Response
@@ -26,11 +28,17 @@ class WeatherViewModel(
     private val getWeatherForecastUseCase: GetWeatherForecastUseCase,
     private val getAstroDetailsUseCase: GetAstroDetailsUseCase,
     private val getDayForecastUseCase: GetDayForecastUseCase,
-    private val saveDayForecastUseCase: SaveDayForecastUseCase
+    private val saveDayForecastUseCase: SaveDayForecastUseCase,
+    private val deleteAllDayForecastUseCase: DeleteAllDayForecastUseCase,
+    private val getForecastUseCase: GetForecastUseCase,
+    private val saveForecastUseCase: SaveForecastUseCase
 ) : ViewModel() {
 
     var backGround : MutableLiveData<Int> = MutableLiveData()
     var colorX : MutableLiveData<String> = MutableLiveData()
+//    val userLocation : MutableLiveData<String> = MutableLiveData()
+
+//    val forecastData : Forecast? = null
 
     val currentWeatherLiveData : MutableLiveData<Response<Current>> = MutableLiveData()
     fun getCurrentWeatherData(location : String) = viewModelScope.launch {
@@ -48,10 +56,13 @@ class WeatherViewModel(
 
     val weatherForecastLiveData : MutableLiveData<Response<Forecast>> = MutableLiveData()
 
+
     fun getWeatherForecast(location: String) = viewModelScope.launch {
         try {
             if (isNetworkAvailable(app)){
                 weatherForecastLiveData.postValue(getWeatherForecastUseCase.execute(location))
+//                userLocation.postValue(location)
+//                userLocation.value?.let { createDataForWorker(it) }
             }else{
                 Toast.makeText(app, "Network Problem FORECAST", Toast.LENGTH_SHORT).show()
             }
@@ -75,6 +86,21 @@ class WeatherViewModel(
         }
     }
 
+    // Full Forecast
+    fun saveForecastData(forecastData : Forecast) = viewModelScope.launch {
+        saveForecastUseCase.execute(forecastData)
+    }
+
+    val forecastLD : MutableLiveData<Forecast> = MutableLiveData()
+
+    fun getForecast() = liveData<Forecast> {
+        getForecastUseCase.execute()
+    }
+
+    fun deleteAllDayForecast() = viewModelScope.launch {
+        deleteAllDayForecastUseCase.execute()
+    }
+
 //    val dayForecastLiveData : MutableLiveData<List<Day>> = MutableLiveData()
 
     fun getDayForecast() = liveData {
@@ -86,6 +112,7 @@ class WeatherViewModel(
     fun saveDayForecast(day: Day) = viewModelScope.launch {
         saveDayForecastUseCase.execute(day)
     }
+
 
     private fun isNetworkAvailable(context: Context?):Boolean{
         if (context == null) return false
@@ -113,5 +140,15 @@ class WeatherViewModel(
         }
         return false
 
+    }
+
+
+    fun createDataForWorker(location: String) : Data{
+        val builder = Data.Builder()
+//        val gson = Gson()
+//        forecastData?.let {
+//            builder.putString("userLocation" , location)
+//        }
+        return builder.build()
     }
 }

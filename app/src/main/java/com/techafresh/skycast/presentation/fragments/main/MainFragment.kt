@@ -115,7 +115,7 @@ class MainFragment : Fragment() {
             val currentHour = localTime.substring(0,2)
 
             // Save Day Forecast to db
-            viewModel.saveDayForecast(it.body()!!.forecast.forecastday[0].day)
+//            viewModel.saveDayForecast(it.body()!!.forecast.forecastday[0].day)
 
             hoursAdapter = HoursAdapter(it.body()!!.forecast.forecastday[0].hour , currentHour ,
                 viewModel.colorX.value.toString()

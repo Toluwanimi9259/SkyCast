@@ -16,6 +16,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -23,22 +24,26 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.work.*
 import com.google.android.material.snackbar.Snackbar
 import com.techafresh.skycast.data.dataClasses.forecast.Forecast
 import com.techafresh.skycast.data.dataClasses.forecast.ForecastX
 import com.techafresh.skycast.databinding.ActivityMainBinding
+import com.techafresh.skycast.domain.alarms.BootCompleteReceiver
 import com.techafresh.skycast.domain.alarms.NotificationReceiver
+import com.techafresh.skycast.domain.alarms.Utils
+import com.techafresh.skycast.domain.workers.DownloadJsonDataToDBWorker
 import com.techafresh.skycast.presentation.viewmodel.WeatherViewModel
 import com.techafresh.skycast.presentation.viewmodel.WeatherViewModelFactory
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
@@ -74,21 +79,36 @@ class MainActivity : AppCompatActivity() {
     // Alarms
     private var alarmMgr: AlarmManager? = null
     private lateinit var alarmIntent: PendingIntent
+
+    // Background Work
+    lateinit var workData : Data
+    lateinit var wLocation : String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         supportActionBar!!.hide()
 
+        val receiver = ComponentName(applicationContext, BootCompleteReceiver::class.java)
+
+        applicationContext.packageManager?.setComponentEnabledSetting(
+            receiver,
+            PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+            PackageManager.DONT_KILL_APP
+        )
+
 
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        scheduleForecastNotification()
-        scheduleTodayNotification()
+//        scheduleForecastNotification()
+//        scheduleTodayNotification()
 
         sharedPreferences = this.getSharedPreferences("First_Timer_Checker", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         editor.putBoolean("isFirstTimer", firstTimer)
+        editor.putLong("timeToRing" , getTime())
         editor.apply()
+
+//        Utils.setAlarm(this , sharedPreferences.getLong("timeToRing" , 1))
 
         val background : Int = intent.getIntExtra("background" , R.drawable.daystorm)
         val color : String = intent.getStringExtra("color").toString()
@@ -103,7 +123,7 @@ class MainActivity : AppCompatActivity() {
         calendar = Calendar.getInstance()
         simpleDateFormat = SimpleDateFormat("yyyy/MM/dd")
         currentDate = simpleDateFormat.format(calendar.time)
-        Log.d("MYTAG DATE", " Current Date = ${currentDate.toString()}")
+        Log.d("MYTAG DATE", " Current Date = ${currentDate}")
 
         // Location TINZ
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -121,6 +141,8 @@ class MainActivity : AppCompatActivity() {
 
                         // Forecast Weather
                         weatherViewModel.getWeatherForecast(listAddress[0].locality)
+                        // Sending Data to the work manager
+                        wLocation = listAddress[0].locality
 
                         // Astro
                         weatherViewModel.getAstroDetails(currentDate, listAddress[0].locality)
@@ -145,35 +167,40 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        Handler().postDelayed(Runnable {
+            startDownloadDataToDBWork()
+        }, 30000)
+
+
         // Forecast Notification
-
-        weatherViewModel.weatherForecastLiveData.observe(this@MainActivity, androidx.lifecycle.Observer {
-                val currentHour = it.body()!!.location.localtime.substring(11).substring(0,2)
-                var isDay = 0
-                if (currentHour.toInt() >= 8){
-                    isDay = 1
-                }
-
-            val tomorrowForecast : ForecastX = it.body()!!.forecast
-
-
-                // Notfication for tommorow
-                val showTime = formatTime(it.body()!!.location.localtime)
-                if (showTime == "10:27 PM"){
-                    pushNotification(
-                        tomorrowForecast.forecastday[1].day.condition.code * 1,
-                        isDay * 1,
-                        it.body()!!.location.name + "",
-                        it.body()!!.forecast.forecastday[1].day.condition.text + "",
-                        it.body()!!.forecast.forecastday[1].day.avgtemp_c.toString() + "",
-                        it.body()!!.forecast.forecastday[1].day.avgtemp_f.toString() + "",
-                        "Tomorrow"
-                    )
-                }else if (showTime == "10:30 AM"){
-                }
+        weatherViewModel.getDayForecast().observe(this , androidx.lifecycle.Observer {
+//            val intent = Intent(applicationContext , NotificationReceiver::class.java)
+//            intent.putExtra("day" , "Today")
+//            intent.putExtra("iconCode" , it[0].condition.code)
+//            intent.putExtra("isDay" , 1)
+//            intent.putExtra("userLocation" , "it[0].")
+//            intent.putExtra("temp_c" , "30")
+//            intent.putExtra("temp_f" , "26")
+//            intent.putExtra("condition" , "Terrible Rain")
+//            intent.putExtra("check" , "Message Received")
         })
 
         requestLocation()
+    }
+
+    private fun startDownloadDataToDBWork(){
+        val workManager : WorkManager = WorkManager.getInstance(applicationContext)
+        val networkConstraint : Constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+        workData = Data.Builder().putString("mainActivityLocation" , wLocation).build()
+        val downloadDataToDBRequest = PeriodicWorkRequestBuilder<DownloadJsonDataToDBWorker>(24 , TimeUnit.HOURS)
+            .setInputData(workData)
+            .setConstraints(networkConstraint)
+            .setInitialDelay(10 , TimeUnit.SECONDS)
+            .build()
+
+        workManager.enqueue(downloadDataToDBRequest)
     }
 
     private fun scheduleTodayNotification() {
@@ -216,8 +243,8 @@ class MainActivity : AppCompatActivity() {
     private fun getTime(): Long {
         Log.d("MYTAG GetTime" ,"INSIDE THE Get Time Method")
         val calendar = Calendar.getInstance()
-        calendar.set(Calendar.HOUR_OF_DAY ,13)
-        calendar.set(Calendar.MINUTE , 0)
+        calendar.set(Calendar.HOUR_OF_DAY ,14)
+        calendar.set(Calendar.MINUTE , 14)
         return calendar.timeInMillis
     }
 

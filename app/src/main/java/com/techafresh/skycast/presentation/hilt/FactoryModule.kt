@@ -17,8 +17,11 @@ class FactoryModule {
     @Singleton
     fun provideFactory(application: Application, getCurrentWeatherUseCase: GetCurrentWeatherUseCase, getWeatherForecastUseCase: GetWeatherForecastUseCase, getAstroDetailsUseCase: GetAstroDetailsUseCase,
                        getDayForecastUseCase: GetDayForecastUseCase,
-                       saveDayForecastUseCase: SaveDayForecastUseCase
+                       saveDayForecastUseCase: SaveDayForecastUseCase,
+                       deleteAllDayForecastUseCase: DeleteAllDayForecastUseCase,
+                       getForecastUseCase: GetForecastUseCase,
+                       saveForecastUseCase: SaveForecastUseCase
     ) : WeatherViewModelFactory{
-        return WeatherViewModelFactory(application,getCurrentWeatherUseCase , getWeatherForecastUseCase , getAstroDetailsUseCase ,getDayForecastUseCase, saveDayForecastUseCase)
+        return WeatherViewModelFactory(application,getCurrentWeatherUseCase , getWeatherForecastUseCase , getAstroDetailsUseCase ,getDayForecastUseCase, saveDayForecastUseCase ,deleteAllDayForecastUseCase, getForecastUseCase, saveForecastUseCase)
     }
 }

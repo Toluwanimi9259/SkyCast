@@ -20,13 +20,24 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SkyCast"
         tools:targetApi="31">
-        <receiver android:name=".domain.alarms.NotificationReceiver"
-        android:enabled="false"
+
+        <receiver android:name=".domain.alarms.NotificationReceiver">
+            </receiver>
+
+        <receiver android:name=".domain.alarms.BootCompleteReceiver"
+            android:enabled="false"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
-            </receiver>
+        </receiver>
+
+        <receiver android:name=".domain.alarms.TimeChangedReceiver"
+            android:exported="true">
+            <intent-filter>
+            <action android:name="android.intent.action.TIME_SET" />
+        </intent-filter></receiver>
+
         <activity
             android:name=".presentation.activities.splash.SplashActivity"
             android:exported="true">
@@ -43,6 +54,15 @@
             android:name=".MainActivity"
             android:exported="false">
         </activity>
+
+
+        <!-- If you want to disable android.startup completely. -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            tools:node="remove">
+        </provider>
+
 
     </application>
 

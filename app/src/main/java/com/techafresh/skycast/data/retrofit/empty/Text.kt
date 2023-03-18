@@ -1,7 +1,9 @@
 package com.techafresh.skycast.data.retrofit.empty
 
+import java.text.DateFormat
 import java.text.SimpleDateFormat
-import java.util.Date
+import java.time.LocalDate
+import java.util.*
 
 fun main() {
     val localTime = "2023-02-25 13:15"
@@ -44,7 +46,16 @@ fun main(args: Array<String>) {
         prefix += 1
         tempX = prefix.toString()
     }
-    System.out.println("|||"+tempX+"|||")
+//    System.out.println("|||"+tempX+"|||")
 
 
+
+    val calendar = Calendar.getInstance()
+    val simpleDateFormat = SimpleDateFormat("yyyy/MM/dd")
+
+    val currentDate = simpleDateFormat.format(calendar.time)
+//    System.out.println("SDF = ${SimpleDateFormat("yyyy/MM/dd").format(Calendar.getInstance().time)}")
+
+    System.out.println("DateFormat = " + DateFormat.getDateTimeInstance().format(Date()))
+//    SimpleDateFormat("E, dd MMM").format(Calendar.getInstance().time)
 }

@@ -14,7 +14,6 @@ import com.techafresh.skycast.R
 
 class NotificationReceiver : BroadcastReceiver() {
     override fun onReceive(mContext: Context?, intent: Intent?) {
-//        if(intent?.action == "android.intent.action.BOOT_COMPLETED"){
             Log.d("MYTAG RECEIVER" ,"INSIDE THE RECEIVER")
 
             val notificationManager = mContext?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -65,7 +64,6 @@ class NotificationReceiver : BroadcastReceiver() {
                 .build()
 
             notificationManager.notify(notificationID , nBuilder)
-//        }
     }
 
     private fun formatImage(iconCode : Int , isDay : Int) : Int{

@@ -41,4 +41,22 @@ class UseCasesModule {
     fun provideGetDayForecastUseCase(repository: Repository) : GetDayForecastUseCase{
         return GetDayForecastUseCase(repository)
     }
+
+    @Provides
+    @Singleton
+    fun provideGetForecastUseCase(repository: Repository) : GetForecastUseCase{
+        return GetForecastUseCase(repository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDeleteAllDayForecastUseCase(repository: Repository) : DeleteAllDayForecastUseCase{
+        return DeleteAllDayForecastUseCase(repository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSaveForecastUseCase(repository: Repository) : SaveForecastUseCase{
+        return SaveForecastUseCase(repository)
+    }
 }
