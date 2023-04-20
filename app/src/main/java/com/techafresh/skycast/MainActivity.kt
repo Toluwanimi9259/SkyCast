@@ -168,7 +168,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         Handler().postDelayed(Runnable {
-            startDownloadDataToDBWork()
+            try {
+                startDownloadDataToDBWork()
+            }catch (ex : Exception){
+                Log.d("MainActivity Work Error = " , "${ex.message}")
+            }
+
         }, 30000)
 
 
@@ -190,17 +195,20 @@ class MainActivity : AppCompatActivity() {
 
     private fun startDownloadDataToDBWork(){
         val workManager : WorkManager = WorkManager.getInstance(applicationContext)
+
         val networkConstraint : Constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
         workData = Data.Builder().putString("mainActivityLocation" , wLocation).build()
-        val downloadDataToDBRequest = PeriodicWorkRequestBuilder<DownloadJsonDataToDBWorker>(24 , TimeUnit.HOURS)
+
+        val downloadDataToDBRequest = PeriodicWorkRequest.Builder(DownloadJsonDataToDBWorker::class.java , 15 , TimeUnit.MINUTES , 5 , TimeUnit.MINUTES)
             .setInputData(workData)
             .setConstraints(networkConstraint)
-            .setInitialDelay(10 , TimeUnit.SECONDS)
             .build()
 
         workManager.enqueue(downloadDataToDBRequest)
+
+//        workManager.enqueueUniquePeriodicWork("downloadJsonDataToDBWorker" , ExistingPeriodicWorkPolicy.REPLACE , downloadDataToDBRequest)
     }
 
     private fun scheduleTodayNotification() {
@@ -317,14 +325,7 @@ class MainActivity : AppCompatActivity() {
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ),
-                requestcode
-            )
+
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -352,7 +353,7 @@ class MainActivity : AppCompatActivity() {
         try{
             startActivityForResult(Intent(android.provider.Settings.ACTION_NETWORK_OPERATOR_SETTINGS) , 0)
         }catch (ex : Exception){
-            ex.printStackTrace()
+            Log.d("MYTAG turnOnInternet Method Exception = " , "${ex.message}")
         }
     }
 
