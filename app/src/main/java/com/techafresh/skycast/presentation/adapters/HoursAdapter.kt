@@ -23,7 +23,7 @@ class HoursAdapter(private val hours : List<Hour> , private val currentHour : St
 //                binding.cardViewHour.setCardBackgroundColor(R.color.sd)
             }
             binding.textViewHour.text = formatTime(hour.time)
-            Picasso.get().load("https:"+hour.condition.icon).placeholder(R.drawable.cloudzap).into(binding.imageViewCondition4)
+            Picasso.get().load("https:"+hour.condition.icon).into(binding.imageViewCondition4)
             Log.d("MYTAG IMAGE URL = " , hour.condition.icon)
 //            Glide.with(binding.textViewTemp.context).load("http://goo.gl/gEgYUd").placeholder(R.drawable.cloudzap).into(binding.imageViewCondition4)
             binding.textViewTemp.text = hour.temp_c.toString()+"℃"

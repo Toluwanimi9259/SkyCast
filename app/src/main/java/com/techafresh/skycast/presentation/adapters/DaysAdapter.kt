@@ -17,7 +17,7 @@ class DaysAdapter(private val days : List<Forecastday>) : RecyclerView.Adapter<D
         @SuppressLint("SetTextI18n")
         fun bind(forecastday: Forecastday){
             var date = formatDate(forecastday.date)
-            binding.textViewDate1.text = date.substring(0,4)
+            binding.textViewDate1.text = date.substring(0,4)+" "
             binding.textViewDate22.text = date.substring(5)
             binding.textViewTemp3.text = forecastday.day.avgtemp_c.toString()+"℃"
             Picasso.get().load("https:"+forecastday.day.condition.icon).placeholder(R.drawable.mooncloudfastwind).into(binding.imageViewCondition3)

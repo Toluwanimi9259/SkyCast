@@ -71,13 +71,14 @@ class DetailFragment : Fragment() {
             binding.textViewTimeX.text = "Last Updated: " + formatTime(it.body()!!.location.localtime)
 
             binding.textViewHumidityX.text = it.body()!!.current.humidity.toString()+"%"
-            binding.textViewAirPressureX.text = it.body()!!.current.pressure_mb.toString()
-            binding.textViewWindX.text = it.body()!!.current.wind_kph.toString()+" km/hr"
+            binding.textViewAirPressureX.text = it.body()!!.current.pressure_mb.toString().substring(0,4)
+            binding.textViewWindX.text = it.body()!!.current.wind_kph.toString().substring(0,1)+" km/hr"
             binding.textViewVisibilityX.text = it.body()!!.current.vis_km.toString()+" km"
 
             binding.textViewCloud.text = it.body()!!.current.cloud.toString()+"%"
             binding.textViewFeelsLike.text = it.body()!!.current.feelslike_c.toString()+"℃"
             binding.textViewWindDirection.text = it.body()!!.current.wind_dir
+
 
         })
 
@@ -416,9 +417,6 @@ class DetailFragment : Fragment() {
 
             else -> R.drawable.group16
         }
-
-
-
     }
 
 }

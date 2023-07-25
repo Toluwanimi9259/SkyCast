@@ -89,15 +89,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         supportActionBar!!.hide()
 
-        val receiver = ComponentName(applicationContext, BootCompleteReceiver::class.java)
-
-        applicationContext.packageManager?.setComponentEnabledSetting(
-            receiver,
-            PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-            PackageManager.DONT_KILL_APP
-        )
-
-
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 //        scheduleForecastNotification()
 //        scheduleTodayNotification()
@@ -311,7 +302,6 @@ class MainActivity : AppCompatActivity() {
                 }else {
                     turnOnInternet()
                 }
-
             })
         snackbar.show()
     }
