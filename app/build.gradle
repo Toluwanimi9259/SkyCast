@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
     id 'com.google.dagger.hilt.android'
+    id 'com.likethesalad.aaper' version '3.0.0'
 }
 
 android {
@@ -41,6 +42,13 @@ android {
 }
 
 dependencies {
+
+    implementation 'com.google.android.gms:play-services-location:21.3.0'
+
+    implementation 'com.github.ColdTea-Projects:SmplrAlarm:2.1.1'
+
+    implementation 'com.github.amirisback:frogo-notification:1.1.1'
+
 
     def nav_version = "2.5.2"
     def lifecycle_version = "2.5.1"

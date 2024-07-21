@@ -26,13 +26,14 @@ import androidx.core.app.NotificationCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.work.*
 import com.google.android.material.snackbar.Snackbar
+import com.likethesalad.android.aaper.api.EnsurePermissions
 import com.techafresh.skycast.data.dataClasses.forecast.Forecast
 import com.techafresh.skycast.data.dataClasses.forecast.ForecastX
 import com.techafresh.skycast.databinding.ActivityMainBinding
 import com.techafresh.skycast.domain.alarms.BootCompleteReceiver
 import com.techafresh.skycast.domain.alarms.NotificationReceiver
 import com.techafresh.skycast.domain.alarms.Utils
-import com.techafresh.skycast.domain.workers.DownloadJsonDataToDBWorker
+import com.techafresh.skycast.notifications.sendForecastNotification
 import com.techafresh.skycast.presentation.viewmodel.WeatherViewModel
 import com.techafresh.skycast.presentation.viewmodel.WeatherViewModelFactory
 import dagger.hilt.android.AndroidEntryPoint
@@ -83,6 +84,11 @@ class MainActivity : AppCompatActivity() {
     // Background Work
     lateinit var workData : Data
     lateinit var wLocation : String
+
+
+    @EnsurePermissions(
+        permissions = [Manifest.permission.ACCESS_FINE_LOCATION , Manifest.permission.ACCESS_COARSE_LOCATION]
+    )
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -96,17 +102,18 @@ class MainActivity : AppCompatActivity() {
         sharedPreferences = this.getSharedPreferences("First_Timer_Checker", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         editor.putBoolean("isFirstTimer", firstTimer)
-        editor.putLong("timeToRing" , getTime())
+        editor.putLong("timeToRing", getTime())
         editor.apply()
 
 //        Utils.setAlarm(this , sharedPreferences.getLong("timeToRing" , 1))
 
-        val background : Int = intent.getIntExtra("background" , R.drawable.daystorm)
-        val color : String = intent.getStringExtra("color").toString()
+        val background: Int = intent.getIntExtra("background", R.drawable.daystorm)
+        val color: String = intent.getStringExtra("color").toString()
 //        Log.d("MYTAG SHIIIT " , "BACKGROUND =$background , Color = $color")
 
         // Initializing the ViewModel
-        weatherViewModel = ViewModelProvider(this, weatherViewModelFactory)[WeatherViewModel::class.java]
+        weatherViewModel =
+            ViewModelProvider(this, weatherViewModelFactory)[WeatherViewModel::class.java]
         weatherViewModel.backGround.value = background
         weatherViewModel.colorX.value = color
 
@@ -124,8 +131,9 @@ class MainActivity : AppCompatActivity() {
                 val geocoder = Geocoder(applicationContext, Locale.getDefault())
 
                 try {
-                    if (isNetworkAvailable(applicationContext)){
-                        listAddress = geocoder.getFromLocation(location.latitude, location.longitude, 1)!!
+                    if (isNetworkAvailable(applicationContext)) {
+                        listAddress =
+                            geocoder.getFromLocation(location.latitude, location.longitude, 1)!!
 
                         // Current Weather
                         weatherViewModel.getCurrentWeatherData(listAddress[0].locality)
@@ -138,68 +146,40 @@ class MainActivity : AppCompatActivity() {
                         // Astro
                         weatherViewModel.getAstroDetails(currentDate, listAddress[0].locality)
 
-                    }else{
-                        makeSnackBarMessage("Internet Connection Error" , "INTERNET")
+                    } else {
+                        makeSnackBarMessage("Internet Connection Error", "INTERNET")
 //                        Toast.makeText(applicationContext, "Internet Connection Problem", Toast.LENGTH_SHORT).show()
                         Log.d("MYTAG", "Internet Connection Problem")
                     }
-                }catch (ex : Exception){
-                    Log.d("MYTAG GEOCODER" ," Exception = ${ex.message}")
+                } catch (ex: Exception) {
+                    Log.d("MYTAG GEOCODER", " Exception = ${ex.message}")
                 }
                 userLocation = location
 //                Toast.makeText(this@MainActivity, "You are in ${listAddress[0].locality}", Toast.LENGTH_SHORT).show()
 //                Log.d("MYTAG" , "City = ${listAddress[0].locality}")
             }
+
             override fun onStatusChanged(s: String, i: Int, bundle: Bundle) {}
             override fun onProviderEnabled(s: String) {}
             override fun onProviderDisabled(s: String) {
-                Toast.makeText(this@MainActivity, "Please Turn on your Location", Toast.LENGTH_LONG).show()
-                makeSnackBarMessage("Location is Off" , "LOCATION")
+                Toast.makeText(this@MainActivity, "Please Turn on your Location", Toast.LENGTH_LONG)
+                    .show()
+                makeSnackBarMessage("Location is Off", "LOCATION")
             }
         }
 
         Handler().postDelayed(Runnable {
             try {
-                startDownloadDataToDBWork()
-            }catch (ex : Exception){
-                Log.d("MainActivity Work Error = " , "${ex.message}")
+//                startDownloadDataToDBWork()
+            } catch (ex: Exception) {
+                Log.d("MainActivity Work Error = ", "${ex.message}")
             }
 
         }, 30000)
 
-
-        // Forecast Notification
-        weatherViewModel.getDayForecast().observe(this , androidx.lifecycle.Observer {
-//            val intent = Intent(applicationContext , NotificationReceiver::class.java)
-//            intent.putExtra("day" , "Today")
-//            intent.putExtra("iconCode" , it[0].condition.code)
-//            intent.putExtra("isDay" , 1)
-//            intent.putExtra("userLocation" , "it[0].")
-//            intent.putExtra("temp_c" , "30")
-//            intent.putExtra("temp_f" , "26")
-//            intent.putExtra("condition" , "Terrible Rain")
-//            intent.putExtra("check" , "Message Received")
-        })
-
         requestLocation()
-    }
 
-    private fun startDownloadDataToDBWork(){
-        val workManager : WorkManager = WorkManager.getInstance(applicationContext)
 
-        val networkConstraint : Constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
-        workData = Data.Builder().putString("mainActivityLocation" , wLocation).build()
-
-        val downloadDataToDBRequest = PeriodicWorkRequest.Builder(DownloadJsonDataToDBWorker::class.java , 15 , TimeUnit.MINUTES , 5 , TimeUnit.MINUTES)
-            .setInputData(workData)
-            .setConstraints(networkConstraint)
-            .build()
-
-        workManager.enqueue(downloadDataToDBRequest)
-
-//        workManager.enqueueUniquePeriodicWork("downloadJsonDataToDBWorker" , ExistingPeriodicWorkPolicy.REPLACE , downloadDataToDBRequest)
     }
 
     private fun scheduleTodayNotification() {
@@ -283,7 +263,7 @@ class MainActivity : AppCompatActivity() {
     ) {
         if (requestCode == requestcode) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show()
+                (this.application as WeatherApp).startLocationUpdates()
             }
             else {
 //                Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
@@ -362,49 +342,6 @@ class MainActivity : AppCompatActivity() {
             cTime = "$time $am"
             "$time $am"
         }
-    }
-
-    fun pushNotification(
-        iconCode : Int ,
-        isDay: Int ,
-        userLocation : String ,
-        condition : String ,
-        temp_c : String ,
-        temp_f : String,
-        day : String
-    ){
-
-        // Notification Channel
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel("1001", "FORECAST", NotificationManager.IMPORTANCE_HIGH).apply {
-                description = "WEATHER FORECAST"
-            }
-
-            notificationManager?.createNotificationChannel(channel)
-        }
-
-        // converting a jpeg file to Bitmap file and making an instance of Bitmap!
-        val imgBitmap= BitmapFactory.decodeResource(resources,formatImage(iconCode , isDay))
-
-        val notificationID = 45
-
-        // Building notification
-        val nBuilder= NotificationCompat.Builder(this,"1001")
-            .setContentTitle("$day in $userLocation: $condition")
-            .setContentText("$temp_c°/$temp_f° See full forecast")
-            .setSmallIcon(R.drawable.baseline_notifications_active_24)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            // passing the Bitmap object as an argument
-            .setLargeIcon(imgBitmap)
-            // Expandable notification
-            .setStyle(NotificationCompat.BigPictureStyle()
-                .bigPicture(imgBitmap)
-                // as we pass null in bigLargeIcon() so the large icon
-                // will goes away when the notification will be expanded.
-                .bigLargeIcon(null))
-            .build()
-
-        notificationManager?.notify(notificationID , nBuilder)
     }
 
     private fun formatImage(iconCode : Int , isDay : Int) : Int{
