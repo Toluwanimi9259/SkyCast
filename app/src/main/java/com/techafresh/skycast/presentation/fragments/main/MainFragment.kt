@@ -100,7 +100,7 @@ class MainFragment : Fragment() {
                 binding.textViewWind.text = it.body()!!.current.wind_kph.toString()+" km/hr"
                 binding.textViewVisibility.text = it.body()!!.current.vis_km.toString()+" km"
                 Picasso.get()
-                    .load(formatImage(it.body()!!.current.condition.code , it.body()!!.current.is_day))
+                    .load(formatImage(it.body()!!.current.condition.code , it.body()!!.current.is_day)) // Problematic
                     .placeholder(R.drawable.fetcher)
                     .into(binding.imageViewCondition)
 
